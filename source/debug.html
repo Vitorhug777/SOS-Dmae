@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Sessão</title>
+    <script src="supabase-config.js?v=3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-auth.js?v=3"></script>
+    <style>
+        body { font-family: monospace; background: #111; color: #0f0; padding: 20px; font-size: 13px; }
+        h1 { color: #fff; }
+        pre { background: #000; padding: 12px; border-radius: 8px; overflow:auto; }
+        button { padding: 10px 16px; margin: 6px; cursor: pointer; font-size: 14px; }
+        .ok { color: #0f0; } .erro { color: #f66; }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico de Sessão</h1>
+    <button onclick="verSessao()">1. Ver getSession()</button>
+    <button onclick="verStorage()">2. Ver Storage (local+session)</button>
+    <button onclick="fazerLogout()">3. Fazer logout()</button>
+    <button onclick="testarLimpeza()">4. limparSessaoLocal() + getSession()</button>
+    <pre id="out">Clique nos botões para diagnosticar.</pre>
+
+    <script>
+        async function escrever(titulo, obj) {
+            const el = document.getElementById('out');
+            let txt = '=== ' + titulo + ' ===\n';
+            try { txt += JSON.stringify(obj, null, 2); } catch (e) { txt += String(obj); }
+            el.textContent = txt;
+        }
+
+        async function verSessao() {
+            const cliente = obterCliente();
+            if (!cliente) { await escrever('obterCliente()', 'FALHOU - cliente null'); return; }
+            const { data, error } = await cliente.auth.getSession();
+            await escrever('getSession()', { data, error });
+        }
+
+        async function verStorage() {
+            const res = { localStorage: [], sessionStorage: [] };
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                res.localStorage.push({ chave: k, valor: (localStorage.getItem(k) || '').slice(0, 120) });
+            }
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const k = sessionStorage.key(i);
+                res.sessionStorage.push({ chave: k, valor: (sessionStorage.getItem(k) || '').slice(0, 120) });
+            }
+            await escrever('Storage', res);
+        }
+
+        async function fazerLogout() {
+            try { await logout(); } catch (e) { await escrever('logout() lançou', String(e)); return; }
+            await escrever('logout() concluído', 'não redirecionou (este script o impediu?). Se redirecionou, recarregue o debug.');
+        }
+
+        async function limparManual() {
+            // No placeholder: substitua para ver o que existe ANTES de limpar
+            const antes = { localStorage: [], sessionStorage: [] };
+            for (let i = 0; i < localStorage.length; i++) antes.localStorage.push(localStorage.key(i));
+            for (let i = 0; i < sessionStorage.length; i++) antes.sessionStorage.push(sessionStorage.key(i));
+            await escrever('Antes de limpar (chaves existentes)', antes);
+        }
+
+        async function testarLimpeza() {
+            limparSessaoLocal();
+            const res = { localStorage: [], sessionStorage: [] };
+            for (let i = 0; i < localStorage.length; i++) res.localStorage.push(localStorage.key(i));
+            for (let i = 0; i < sessionStorage.length; i++) res.sessionStorage.push(sessionStorage.key(i));
+            const { data, error } = obterCliente() ? await obterCliente().auth.getSession() : { data: null, error: 'sem cliente' };
+            await escrever('Após limparSessaoLocal() → storage E getSession()', { restanteStorage: res, getSession: { data, error } });
+        }
+    </script>
+</body>
+</html>

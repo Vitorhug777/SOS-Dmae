@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SOS Manutenção Predial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="supabase-config.js?v=3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-auth.js?v=3"></script>
+    <style>
+        :root {
+            --azul-dmae: #0b3c78;
+            --azul-profundo: #0a2540;
+            --texto-principal: #0f172a;
+            --texto-secundario: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #eef2f7; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+
+        .login-split { display: flex; width: 100%; max-width: 960px; min-height: 580px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px -12px rgba(11, 60, 120, 0.25); }
+
+        .login-brand { flex: 1 1 45%; position: relative; overflow: hidden; background: linear-gradient(135deg, #0b3c78 0%, #0a2540 100%); color: #ffffff; display: flex; }
+        .login-brand::before { content: ""; position: absolute; inset: 0; background: radial-gradient(500px 300px at 15% 10%, rgba(56, 130, 246, 0.35), transparent 60%), radial-gradient(450px 350px at 90% 90%, rgba(14, 116, 144, 0.3), transparent 60%), radial-gradient(300px 300px at 70% 20%, rgba(255, 255, 255, 0.08), transparent 60%); }
+        .login-brand::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 44px 44px; -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%); mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%); }
+        .brand-inner { position: relative; z-index: 1; padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .brand-logos-topo { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 24px; }
+        .brand-logos-topo img { height: 64px; width: auto; max-width: 100%; object-fit: contain; }
+        .brand-logos { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 28px; }
+        .brand-logos span { border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; border-radius: 9999px; padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.4px; background: rgba(255,255,255,0.08); }
+        .brand-inner h1 { font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.2; margin-bottom: 10px; color: #ffffff; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+        .brand-nid { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; color: rgba(255, 255, 255, 0.85); margin-bottom: 8px; text-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+        .brand-desc { font-size: 14px; font-weight: 400; color: rgba(255, 255, 255, 0.85); line-height: 1.6; text-shadow: 0 1px 8px rgba(0,0,0,0.25); }
+
+        .login-panel { flex: 1 1 55%; background: #fafafa; display: flex; align-items: center; justify-content: center; padding: 48px; }
+        .login-form { width: 100%; max-width: 360px; }
+        .login-form h2 { font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 6px; }
+        .login-form .form-sub { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+
+        .campo { margin-bottom: 18px; }
+        .campo label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 8px; }
+        .input-icone { position: relative; }
+        .input-icone svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #94a3b8; pointer-events: none; }
+        .campo input { width: 100%; height: 44px; padding: 0 14px 0 42px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--texto-principal); background: #f8fafc; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; outline: none; }
+        .campo input::placeholder { color: #94a3b8; }
+        .campo input:focus { border-color: #0b3c78; background: #fff; box-shadow: 0 0 0 3px rgba(11, 60, 120, 0.15); }
+
+        .btn-login { width: 100%; height: 46px; padding: 0 14px; background: #0b3c78; color: #fff; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease; box-shadow: 0 4px 12px rgba(11, 60, 120, 0.25); }
+        .btn-login:hover { background: #15509b; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(11, 60, 120, 0.3); }
+        .btn-login:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(11, 60, 120, 0.25); }
+        .btn-login:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .erro { background: #fef2f2; color: #dc2626; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: none; text-align: center; font-weight: 500; }
+
+        .loading-dots:after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
+        @keyframes dots { 0%,20%{color:rgba(0,0,0,0);text-shadow:.25em 0 0 rgba(0,0,0,0),.5em 0 0 rgba(0,0,0,0)}40%{color:inherit;text-shadow:.25em 0 0 rgba(0,0,0,0),.5em 0 0 rgba(0,0,0,0)}60%{text-shadow:.25em 0 0 inherit,.5em 0 0 rgba(0,0,0,0)}80%,100%{text-shadow:.25em 0 0 inherit,.5em 0 0 inherit}}
+
+        @media (max-width: 860px) {
+            .login-split { flex-direction: column; max-width: 480px; min-height: 0; }
+            .login-brand { flex: none; }
+            .brand-inner { padding: 32px 28px; }
+            .brand-inner h1 { font-size: 22px; }
+            .brand-logos { margin-bottom: 16px; }
+            .brand-desc { display: none; }
+            .login-panel { padding: 32px 24px; }
+            .campo input { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-split">
+        <aside class="login-brand">
+            <div class="brand-inner">
+                <div class="brand-logos-topo">
+                    <img src="1.png" alt="DMAE, Prefeitura de Uberlândia e NID">
+                </div>
+                <div class="brand-logos">
+                    <span>DMAE</span>
+                    <span>Prefeitura de Uberlândia</span>
+                </div>
+                <h1>SOS Manutenção Predial</h1>
+                <p class="brand-nid">Núcleo de Inteligência de Dados</p>
+                <p class="brand-desc">Triagem e Análise de Chamados</p>
+            </div>
+        </aside>
+        <main class="login-panel">
+            <div class="login-form">
+                <h2>Acesse sua conta</h2>
+                <p class="form-sub">Entre com seu e-mail e senha.</p>
+                <div class="erro" id="msgErro">Usuário ou senha inválidos.</div>
+                <div class="campo">
+                    <label>Email</label>
+                    <div class="input-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <input type="email" id="inputUsuario" placeholder="Digite seu email" autocomplete="email" onkeydown="if(event.key==='Enter') logar()">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label>Senha</label>
+                    <div class="input-icone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <input type="password" id="inputSenha" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter') logar()">
+                    </div>
+                </div>
+                <button class="btn-login" id="btnLogin" onclick="logar()">Entrar</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzdFNFDHAJi19gOIPye6vR_eqeQgfbsRuSagL4ql414kDjSsfye7EPBljYqg0gHoknK/exec';
+        // GET com retentativa automatica: o Apps Script falha de forma intermitente (404/cold start).
+        (function () {
+            const fetchOriginal = window.fetch.bind(window);
+            window.fetch = function (url, opcoes) {
+                const ehApi = String(url).indexOf(API_URL) !== -1;
+                const metodo = ((opcoes && opcoes.method) || 'GET').toUpperCase();
+                if (!ehApi || metodo !== 'GET') {
+                    return fetchOriginal(url, opcoes);
+                }
+                const sinalExterno = opcoes && opcoes.signal;
+                let tentativa = 0;
+                function tentar() {
+                    tentativa++;
+                    const controlador = new AbortController();
+                    const limite = setTimeout(function () { controlador.abort(); }, 30000);
+                    if (sinalExterno) {
+                        if (sinalExterno.aborted) {
+                            clearTimeout(limite);
+                            controlador.abort();
+                        } else {
+                            sinalExterno.addEventListener('abort', function () { controlador.abort(); }, { once: true });
+                        }
+                    }
+                    return fetchOriginal(url, { signal: controlador.signal }).then(function (res) {
+                        clearTimeout(limite);
+                        if (!res.ok && tentativa < 3) return tentar();
+                        return res;
+                    }).catch(function (err) {
+                        clearTimeout(limite);
+                        if (sinalExterno && sinalExterno.aborted) throw err;
+                        if (tentativa < 3) return tentar();
+                        throw err;
+                    });
+                }
+                return tentar();
+            };
+        })();
+        let prefetchDados = null;
+        (function aquecerBackend() {
+            prefetchDados = fetch(API_URL).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (d) { return Array.isArray(d) ? d : null; }).catch(function () { return null; });
+            setInterval(function () { fetch(API_URL).catch(function () {}); }, 60000);
+        })();
+
+        function salvarNomeUsuario(usuario) {
+            try {
+                const meta = usuario?.user_metadata || {};
+                const nome = meta.nome || meta.displayName || meta.full_name || usuario?.email || usuario?.id || '';
+                localStorage.setItem('supabase_nome_usuario', nome);
+                return nome;
+            } catch {
+                return '';
+            }
+        }
+
+        function mensagemErroAuth(error) {
+            const msg = String((error && (error.message || error.msg)) || '');
+            if (/email not confirmed/i.test(msg)) return 'E-mail ainda não confirmado. Verifique sua caixa de entrada e confirme o cadastro.';
+            if (/too many requests|rate limit|over request/i.test(msg)) return 'Muitas tentativas em sequência. Aguarde alguns minutos e tente de novo.';
+            if (/failed to fetch|networkerror|network request failed|load failed/i.test(msg)) return 'Sem conexão com o servidor de autenticação. Verifique sua internet e tente de novo.';
+            if (/invalid login credentials|invalid.*password|user not found/i.test(msg)) return 'Usuário ou senha inválidos.';
+            return 'Falha na autenticação' + (msg ? ' (' + msg + ').' : '.');
+        }
+
+        async function logar() {
+            const usuario = document.getElementById('inputUsuario').value.trim();
+            const senha = document.getElementById('inputSenha').value;
+            const btn = document.getElementById('btnLogin');
+            const erro = document.getElementById('msgErro');
+
+            if (!usuario || !senha) {
+                erro.textContent = 'Preencha usuário e senha.';
+                erro.style.display = 'block';
+                return;
+            }
+
+            let cliente;
+            try {
+                cliente = construirCliente();
+            } catch (e) {
+                console.error('[Supabase]', e.message);
+                erro.textContent = e.message;
+                erro.style.display = 'block';
+                return;
+            }
+
+            erro.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = 'Validando<span class="loading-dots"></span>';
+
+            try {
+                const { data, error } = await cliente.auth.signInWithPassword({
+                    email: usuario,
+                    password: senha
+                });
+
+                if (error) {
+                    console.error('Erro do Supabase:', error);
+                    erro.textContent = mensagemErroAuth(error);
+                    erro.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = 'Entrar';
+                    return;
+                }
+
+                salvarNomeUsuario(data.user);
+                btn.innerHTML = 'Carregando dados<span class="loading-dots"></span>';
+                try {
+                    const limite = new Promise(function (res) { setTimeout(function () { res(null); }, 5000); });
+                    const dados = await Promise.race([Promise.resolve(prefetchDados), limite]);
+                    if (dados) {
+                        try { localStorage.setItem('dmae_cache', JSON.stringify({ timestamp: Date.now(), data: dados })); } catch (eCache) {}
+                    }
+                } catch (ePre) {}
+                window.location.replace('dashboard.html');
+            } catch (e) {
+                console.error('Exceção no login:', e);
+                erro.textContent = mensagemErroAuth(e);
+                erro.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+            }
+        }
+    </script>
+</body>
+</html>
