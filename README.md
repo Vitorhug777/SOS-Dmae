@@ -9,7 +9,7 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
 <div align="center">
-  <img src="assets/capa-1200x627.png" alt="SOS Manutenção Predial" width="100%">
+  <img src="capa-1200x627.png" alt="SOS Manutenção Predial" width="100%">
 </div>
 
 ---
@@ -18,40 +18,16 @@
 
 O **SOS Manutenção Predial** foi desenvolvido para modernizar e centralizar o fluxo de chamados de manutenção e infraestrutura do setor público. A solução substitui o controle descentralizado por um sistema com atualização contínua, galeria de fotos para inspeção e controle de acesso por departamento.
 
-<div align="center">
-  <img src="assets/telas-individuais/01-painel-pendentes.png" alt="Painel de chamados pendentes" width="100%">
-</div>
-
 ---
 
-## 🔄 Fluxo do Chamado
+## 🖼️ Telas do Sistema
 
-| 1. Triagem | 2. Planejamento |
+| | |
 |:---:|:---:|
-| <img src="assets/telas-individuais/02-triagem.png" alt="Triagem"> | <img src="assets/telas-individuais/03-planejamento.png" alt="Planejamento"> |
-| Cada pedido chega com fotos, local e motivo. A equipe define área e prioridade. | Responsável, data prevista e prazo para cada chamado. |
-| **3. Em Tratativa** | **4. Em Execução** |
-| <img src="assets/telas-individuais/04-em-tratativa.png" alt="Em tratativa"> | <img src="assets/telas-individuais/05-em-execucao.png" alt="Em execução"> |
-| Chamados que dependem de orçamento ou de outra área. | Acompanhamento do que já está com a equipe em campo. |
-| **5. Concluídos** | **6. Indeferidos** |
-| <img src="assets/telas-individuais/06-concluidos.png" alt="Concluídos"> | <img src="assets/telas-individuais/07-indeferidos.png" alt="Indeferidos"> |
-| Histórico com data de conclusão, materiais e observações técnicas. | Pedidos recusados guardam o motivo para consulta futura. |
-
-### Detalhe do chamado
-
-<div align="center">
-  <img src="assets/telas-individuais/08-detalhe-do-chamado.png" alt="Detalhe do chamado" width="100%">
-</div>
-
-### No celular
-
-<div align="center">
-  <img src="assets/telas-individuais/10-celular-inicio.png" alt="Celular: início" width="30%">
-  &nbsp;
-  <img src="assets/telas-individuais/11-celular-detalhe.png" alt="Celular: detalhe" width="30%">
-  &nbsp;
-  <img src="assets/telas-individuais/12-celular-execucao.png" alt="Celular: execução" width="30%">
-</div>
+| <img src="carrossel-1.png" alt="Visão geral" width="100%"> | <img src="carrossel-2.png" alt="Triagem" width="100%"> |
+| <img src="carrossel-3.png" alt="Planejamento" width="100%"> | <img src="carrossel-4.png" alt="Em tratativa e em execução" width="100%"> |
+| <img src="carrossel-5.png" alt="Concluídos" width="100%"> | <img src="carrossel-6.png" alt="Detalhe do chamado" width="100%"> |
+| <img src="carrossel-7.png" alt="No celular" width="100%"> | <img src="carrossel-8.png" alt="Funcionalidades" width="100%"> |
 
 > As imagens usam dados fictícios de demonstração.
 
